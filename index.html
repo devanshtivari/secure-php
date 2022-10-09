@@ -1,0 +1,177 @@
+<?php
+        server = "localhost";
+        $username = "root";
+        $password = "";
+        $db = "codimaths";
+
+        $conn = mysqli_connect($server, $username, $password, $db);
+
+        if ($conn === false) {
+            echo
+                    '
+                    <script>
+                        alert("There is a problem at our end. Try again later...");
+                        window.location.href = "https://www.codimaths.com/";
+                    </script>
+                    ';
+            die("Could not connect ." . mysqli_connect_error());
+        }
+
+        $name_placeholder = "Name";
+        $email_placeholder = "Email Address";
+        $phone_placeholder = "Phone Number";
+        $age_placeholder = "Age";
+
+        $name_err = $email_err = "";
+
+        $name = $email = $phone = $age = "";
+
+        function test_input($data){
+            $data = trim($data);
+            $data = stripslashes($data);
+            $data = htmlspecialchars($data);
+            return $data;
+        }
+
+        if($_SERVER("REQUEST_METHOD") == "POST"){
+            if(empty($_POST["name"])){
+                $name_placeholder = "Name is required";
+                die(1);
+            }else{
+                $name = test_input($_POST["name"]);
+                if(!preg_match("/^[a-zA-Z-' ]*$/",$name)){
+                    $name_err = "Only letters and white spaces are allowed";
+                    die(1);
+                }
+            }
+
+            if(empty($_POST["email"])){
+                $email_placeholder = "Email is required";
+            }else{
+                $email = test_input($_POST["email"]);
+                if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                    $email_err = "Invalid email format";
+                }
+            }
+
+            if(empty($_POST["phone"])){
+                $phone_placeholder = "Phone number is required";
+            }else{
+                $phone = test_input($_POST["phone"]);
+            }
+
+            if(empty($_POST["age"])){
+                $age_placeholder = "Age is required";
+            }else{
+                $age = test_input($_POST["age"]);
+            }
+
+            $email_query = "SELECT EXISTS(SELECT * FROM student_data WHERE Email='$email')"
+            if($email_query > 0){
+                $email_err = "Email already exists";
+            }else{
+                $query = "INSERT INTO student_data(Name , Email , Phone, Age) VALUES ('$name' , '$email' , '$phone' , '$age' )";
+
+                if(mysqli_query($conn,$query)){
+                    echo
+                    '
+                    $name
+                    <script>
+                        //alert("Data is submitted succesfully. You will be redirected to home page");
+                        console.log("data is stored successfully")
+                        //window.location.href = "http://www.codimaths.com/";
+                    </script>
+                    ';
+                    die(1);
+                }else{
+                    echo
+                    '
+                    <script>
+                        //alert("We are facing error to process your data...");
+                        //window.location.reload();
+                        console.log("We are facing error to process your data...");
+                    </script>
+                    ';
+                    die(1);
+                }
+            }
+
+        }
+
+        else{
+            echo "
+                <script>
+                    console.log("Something wrong happened at our end. For security, page will reload...");
+                    window.location.reload();
+                </script>
+            ";
+            die(1);
+        }
+        mysqli_close($conn);
+    ?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!--coded with ♥ by Devansh-->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description"
+        content="Codimaths is a edutech company focused at delivering quality education in field of vedic mathematics, coding, artificial intelligence and space science at affordable price.">
+    <meta name="keywords"
+        content="codimaths, vedic mathematics, coding, artificial intelligence, space science, python programming course, web development course, codi maths, online learning, online courses.">
+    <meta name="author" content="www.tinyurl.com/devanshtivari">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/form_style.css">
+    <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon" />
+    <!-- cdn for jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!---->
+    <title>Codimaths - Register</title>
+</head>
+
+<body>
+    
+    <section>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="box">
+            <div class="square" style="--i:0"></div>
+            <div class="square" style="--i:1"></div>
+            <div class="square" style="--i:2"></div>
+            <div class="square" style="--i:3"></div>
+            <div class="square" style="--i:4"></div>
+            <div class="square" style="--i:5"></div>
+            <div class="square" style="--i:6"></div>
+            <div class="container">
+                <form class="form" id="form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+                    <h2>Book a Class Now</h2>
+                    <form action="">
+                        <div class="inputBox">
+                            <input type="text" name="name" id="" placeholder="Name">
+                        </div>
+                        <div class="inputBox">
+                            <input type="email" name="email" id="" placeholder="Email Address">
+                        </div>
+                        <div class="inputBox">
+                            <input type="text" name="phone" id="" placeholder="Phone Number">
+                        </div>
+                        <div class="inputBox">
+                            <input type="number" name="age" id="" placeholder="Age">
+                        </div>
+
+                        <div class="inputBox">
+                            <input type="submit" name="submit-button" id="submit-button" value="Register">
+                        </div>
+                    </form>
+                </form>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
